@@ -1,0 +1,415 @@
+swagger: '2.0'
+info:
+  title: Bank Argent API documentation
+  description: Contains all available API endpoints in this codebase
+  version: '1.0.0'
+  termsOfService: 'http://swagger.io/terms/'
+host: localhost:3001
+basePath: /api/v1
+schemes:
+  - http
+paths:
+  /user/login:
+    post:
+      tags:
+        - User Module
+      summary: Login
+      description: API for Login
+      parameters:
+        - in: body
+          name: body
+          description: Login Payload
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      produces: 
+        - application/json
+      responses:
+        '200':
+          description: Login Successfully
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /user/signup:
+    post:
+      tags:
+        - User Module
+      summary: Signup
+      description: API for Signup
+      parameters:
+        - in: body
+          name: body
+          description: Signup Payload
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Signup Successfully
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /user/profile:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - User Module
+      summary: User Profile API
+      description: API for fetching a user profile
+      #produces:
+       # - application/json
+      responses:
+        '200':
+          description: User profile retrieved successully
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+    put:
+      security:
+        - Bearer: []
+      tags:
+        - User Module
+      summary: User Profile API
+      description: API for updating a user profile
+      parameters:
+        - in: body
+          name: body
+          description: Update user profile attributes
+          required: true
+          schema:
+            $ref: '#/definitions/UserProfile'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: User profile retrieved successully
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /user/accounts:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Accounts Module
+      summary: User Accounts API
+      description: API for fetching user's accounts
+      parameters:
+        - in: body
+          name: body
+          description: Accounts Payload
+          required: true
+          schema:
+            $ref: '#/definitions/Accounts'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: accounts retrieved successfully
+          schema:
+            $ref: '#/definitions/AccountsApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /transactions/categories:
+    get:
+      tags:
+        - Accounts Module
+      summary: Transactions categories
+      description: API for fetching the list of all transactions' categories
+      responses:
+        '200':
+          description: categories list retrieved successfully
+          schema:
+            $ref: '#/definitions/CategoriesApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /accounts/transactions:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Accounts Module
+      summary: Account Transactions API
+      description: API for fetching accounts' transactions
+      parameters:
+        - in: body
+          name: body
+          description: Transactions Payload
+          required: true
+          schema:
+            $ref: '#/definitions/Transactions'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          schema:
+            $ref: '#/definitions/TransactionsApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /accounts/transactions/transaction/category:
+    patch:
+      security:
+        - Bearer: []
+      tags:
+        - Accounts Module
+      summary: Transaction API
+      description: API for modifying a transaction category
+      parameters:
+        - in: body
+          name: body
+          description: Category Payload
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionCategory'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Category changed successfully
+          schema:
+            $ref: '#/definitions/SingleTransactionApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /accounts/transactions/transaction/note:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Accounts Module
+      summary: Transaction API
+      description: API for creating a transaction note
+      parameters:
+        - in: body
+          name: body
+          description: Note Payload
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionNote'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Note created successfully
+          schema:
+            $ref: '#/definitions/SingleTransactionApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  User:
+    properties:
+      email:
+        type: string
+        description: user email
+      password:
+        type: string
+        description: user password
+      firstName:
+        type: string
+        description: user first name
+      lastName:
+        type: string
+        description: user last name
+      userName:
+        type: string
+        description: user public name
+  Login:
+    properties:
+      email:
+        type: string
+        description: user email
+      password:
+        type: string
+        description: user password
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        type: object
+        properties:
+          id:
+            type: string
+          email:
+            type: string
+  LoginResponse:
+    type: object
+    properties:
+      token:
+        type: string
+  UserProfile:
+    type: object
+    properties:
+      userName:
+        type: string
+  AccountsApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        type: array
+        items:
+          type: object
+          properties:
+            account_id:
+              type: string
+              description: account unique id
+            account_type:
+              type: string
+              description: account type
+            account_number:
+              type: integer
+              description: account number
+            balance_value:
+              type: number
+              description: balance value
+            balance_type:
+              type: string
+              description: balance type
+            transactions:
+              type: array
+              items:
+                type: string
+  CategoriesApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        type: array
+        items:
+          type: object
+          properties:
+            transaction_category_id:
+              type: string
+              description: transaction category unique id
+            transaction_category_label:
+              type: string
+              description: transaction category name
+  Accounts:
+    type: object
+    properties:
+      user_id:
+        type: string
+        description: account owner id
+  Transactions:
+    type: object
+    properties:
+      account_id:
+        type: string
+  TransactionCategory:
+    type: object
+    properties:
+      transaction_id:
+        type: string
+      category_id:
+        type: string
+  TransactionsApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        type: array
+        items:
+          type: object
+          properties:
+            transaction_id:
+              type: string
+              description: transaction unique id
+            transaction_date:
+              type: string
+              format: date
+            transaction_description:
+              type: string
+              description: transaction description
+            transaction_value:
+              type: number
+              description: transaction amount value
+            transaction_type:
+              type: string
+              description: transaction type
+            transaction_note:
+              type: string
+              description: note
+            transaction_category_id:
+              type: string
+              description: transaction category id
+  SingleTransactionApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+          type: object
+          properties:
+            transaction_id:
+              type: string
+              description: transaction unique id
+            transaction_date:
+              type: string
+              format: date
+            transaction_description:
+              type: string
+              description: transaction description
+            transaction_value:
+              type: number
+              description: transaction amount value
+            transaction_type:
+              type: string
+              description: transaction type
+            transaction_note:
+              type: string
+              description: note
+            transaction_category_id:
+              type: string
+              description: transaction category id
+  TransactionNote:
+    type: object
+    properties:
+      transaction_id:
+        type: string
+      transaction_note:
+        type: string
