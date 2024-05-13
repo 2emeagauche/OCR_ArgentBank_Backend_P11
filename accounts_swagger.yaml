@@ -146,7 +146,7 @@ paths:
           description: No categories found
         '500':
           description: Internal Server Error
-  /accounts/transactions:
+  /accounts/account/{account_id}/transactions:
     post:
       security:
         - Bearer: []
@@ -155,6 +155,10 @@ paths:
       summary: Account Transactions API
       description: API for fetching accounts' transactions
       parameters:
+        - in: path
+          name: account_id
+          type: string
+          required: true
         - in: body
           name: body
           description: Transactions Payload for a specific Acount ID and for the current month
@@ -176,21 +180,29 @@ paths:
           description: No transactions found for this account
         '500':
           description: Internal Server Error
-  /accounts/transactions/transaction/category:
+  /accounts/account/{account_id}/transactions/transaction/{transaction_id}:
     patch:
       security:
         - Bearer: []
       tags:
         - Accounts Module
       summary: Transaction API
-      description: API for modifying a transaction category
+      description: API for modifying a transaction category and note
       parameters:
+        - in: path
+          name: account_id
+          type: string
+          required: true
+        - in: path
+          name: transaction_id
+          type: string
+          required: true
         - in: body
           name: body
           description: Category Payload
           required: true
           schema:
-            $ref: '#/definitions/TransactionCategory'
+            $ref: '#/definitions/TransactionUpdate'
       produces:
         - application/json
       responses:
@@ -200,36 +212,6 @@ paths:
             $ref: '#/definitions/SingleTransactionApiResponse'
         '400':
           description: The category is invalid
-        '401':
-          description: Unauthorized.
-        '404':
-          description: The transaction does not exist
-        '500':
-          description: Internal Server Error
-  /accounts/transactions/transaction/note:
-    post:
-      security:
-        - Bearer: []
-      tags:
-        - Accounts Module
-      summary: Transaction API
-      description: API for creating a transaction note
-      parameters:
-        - in: body
-          name: body
-          description: Note Payload
-          required: true
-          schema:
-            $ref: '#/definitions/TransactionNote'
-      produces:
-        - application/json
-      responses:
-        '201':
-          description: Note created successfully
-          schema:
-            $ref: '#/definitions/SingleTransactionApiResponse'
-        '400':
-          description: The note is note a string
         '401':
           description: Unauthorized.
         '404':
@@ -349,16 +331,14 @@ definitions:
   Transactions:
     type: object
     properties:
-      account_id:
-        type: string
       current_month:
         type: integer
-  TransactionCategory:
+  TransactionUpdate:
     type: object
     properties:
-      transaction_id:
-        type: string
       category_id:
+        type: string
+      transaction_note:
         type: string
   TransactionsApiResponse:
     type: object
@@ -424,10 +404,3 @@ definitions:
             transaction_category_id:
               type: string
               description: transaction category id
-  TransactionNote:
-    type: object
-    properties:
-      transaction_id:
-        type: string
-      transaction_note:
-        type: string
